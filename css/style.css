@@ -38,6 +38,7 @@ body {
 canvas {
 	background-color: #262626;
 }
+.button-field,
 .text-field {
 	display: inline-block;
 	padding: var(--text-field-padding-y) var(--text-field-padding-x);
@@ -45,6 +46,9 @@ canvas {
 	background-color: var(--color-text-field);
 	border-radius: var(--text-field-padding-y);
 	margin-left: var(--text-field-spacing);
+}
+.button-field {
+	cursor: pointer;
 }
 .text-field:nth-child(1) {
 	margin-left: 0px;

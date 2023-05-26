@@ -1,6 +1,7 @@
+import * as Plot from './plot.js';
 import { ExecLoop, FrameLoop } from './loops.js';
 
-const { sqrt } = Math;
+const { PI, min, max, sqrt, acos } = Math;
 
 let canvas = true ? null : document.createElement('canvas');
 let info = true ? null : document.createElement('textarea');
@@ -13,13 +14,9 @@ const r1 = 2;
 const r2 = 4;
 const nDataPoints = 1000;
 
-let m1 = 1e3;
-let m2 = 1;
-let v0 = 2e-4;
-let d0 = 1;
-let dt = 0.01;
-let maxT = 15e3;
+Plot.setRecording(recording);
 
+let m1, m2, v0, d0, dt, maxT;
 let mSum, px, py, vx, vy;
 let minD, maxD;
 let dst, angle;
@@ -28,14 +25,13 @@ let itCount, nextRecT, strideRec;
 const checkRecording = () => {
 	const t = itCount*dt;
 	if (t < nextRecT) return;
-	recording.push({ px, py });
-	console.log(recording.length);
+	recording.push({ t, px, py, angle });
 	nextRecT = recording.length*strideRec;
 };
 
 const renderBody = (x, y, rad) => {
 	ctx.beginPath();
-	ctx.arc(x, y, rad, 0, Math.PI*2);
+	ctx.arc(x, y, rad, 0, PI*2);
 	ctx.fill();
 };
 
@@ -47,7 +43,7 @@ const updateInfo = () => {
 	text += 'Min. r: ' + minD + '\n';
 	text += 'Max. r: ' + maxD + '\n';
 	text += 'e: ' + (maxD - minD)/(maxD + minD) + '\n';
-	text += 'Angle: ' + (angle/Math.PI*180) + '\n';
+	text += 'Angle: ' + (angle/PI*180) + '\n';
 	info.value = text;
 };
 
@@ -55,37 +51,44 @@ const render = () => {
 	const { width, height } = canvas;
 	ctx.clearRect(0, 0, width, height);
 	ctx.fillStyle = '#fff';
-	const s = Math.min(width, height)*0.4/d0;
+	const s = min(width, height)*0.4/d0;
 	const cx = width*0.5;
 	const cy = height*0.5;
 	renderBody(cx, cy, r2);
 	renderBody(cx + px*s, cy - py*s, r1);
 	updateInfo();
+	Plot.render();
 };
 
 const updateBodies = () => {
 	const dstSqr = px*px + py*py;
 	const a = G*mSum/dstSqr;
 	dst = sqrt(dstSqr);
-	minD = Math.min(minD, dst);
-	maxD = Math.max(maxD, dst);
+	minD = min(minD, dst);
+	maxD = max(maxD, dst);
 	const s = a/dst*dt;
 	vx -= px*s;
 	vy -= py*s;
 	px += vx*dt;
 	py += vy*dt;
 	const nx = px/dst;
-	angle = py >= 0 ? Math.acos(nx) : Math.PI*2 - Math.acos(nx);
+	angle = py >= 0 ? acos(nx) : PI*2 - acos(nx);
 	++ itCount;
 };
 
 const iterate = () => {
-	if (itCount*dt >= maxT) return;
+	if (itCount*dt >= maxT) {
+		stop();
+		return;
+	}
 	checkRecording();
 	for (let i=0; i<nIt; ++i) {
 		updateBodies();
 		checkRecording();
-		if (itCount*dt >= maxT) return;
+		if (itCount*dt >= maxT) {
+			stop();
+			return;
+		}
 	}
 };
 
@@ -124,6 +127,12 @@ export const start = () => {
 
 export const setInfo = (dom) => {
 	info = dom;
+};
+
+export const stop = () => {
+	execLoop.stop();
+	renderLoop.stop();
+	render();
 };
 
 reset();
