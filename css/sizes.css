@@ -11,4 +11,6 @@ body {
 	--text-field-padding-y: 5px;
 	--text-field-padding-x: 7px;
 	--text-field-spacing: 10px;
+	--info-height: 288px;
+	--info-padding: 10px;
 }

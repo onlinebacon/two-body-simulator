@@ -1,41 +1,36 @@
 import { ExecLoop, FrameLoop } from './loops.js';
 
+const { sqrt } = Math;
+
 let canvas = true ? null : document.createElement('canvas');
+let info = true ? null : document.createElement('textarea');
 let ctx = true ? null : new CanvasRenderingContext2D();
 
-class Body {
-	constructor(...args) {
-		this.set(...args);
-	}
-	set(m = 1, x = 0, y = 0, vx = 0, vy = 0) {
-		this.m = m;
-		this.x = x;
-		this.y = y;
-		this.vx = vx;
-		this.vy = vy;
-	}
-}
-
 const recording = [];
+const G = 6.6743e-11;
 const nIt = 2e3;
 const r1 = 2;
 const r2 = 4;
-const b1 = new Body(1, 1, 0, 0, 0);
-const b2 = new Body(1, 0, 0, 0, 0);
+const nDataPoints = 1000;
 
-let m1 = 1;
-let m2 = 1e3;
+let m1 = 1e3;
+let m2 = 1;
 let v0 = 2e-4;
 let d0 = 1;
-let dt = 1e-3;
-let maxT = 0;
-let itCount = 0;
-let nextRecT = 0;
+let dt = 0.01;
+let maxT = 15e3;
 
-const calcInitialVelocities = (m1, m2, v0) => {
-	const v2 = -v0*m1/(m1 + m2);
-	const v1 = v0 + v2;
-	return [ v1, v2 ];
+let mSum, px, py, vx, vy;
+let minD, maxD;
+let dst, angle;
+let itCount, nextRecT, strideRec;
+
+const checkRecording = () => {
+	const t = itCount*dt;
+	if (t < nextRecT) return;
+	recording.push({ px, py });
+	console.log(recording.length);
+	nextRecT = recording.length*strideRec;
 };
 
 const renderBody = (x, y, rad) => {
@@ -44,50 +39,91 @@ const renderBody = (x, y, rad) => {
 	ctx.fill();
 };
 
+const updateInfo = () => {
+	let text = '';
+	text += 'x: ' + px + '\n';
+	text += 'y: ' + py + '\n';
+	text += 'r: ' + dst + '\n';
+	text += 'Min. r: ' + minD + '\n';
+	text += 'Max. r: ' + maxD + '\n';
+	text += 'e: ' + (maxD - minD)/(maxD + minD) + '\n';
+	text += 'Angle: ' + (angle/Math.PI*180) + '\n';
+	info.value = text;
+};
+
 const render = () => {
 	const { width, height } = canvas;
 	ctx.clearRect(0, 0, width, height);
 	ctx.fillStyle = '#fff';
-	const rad = 5;
 	const s = Math.min(width, height)*0.4/d0;
 	const cx = width*0.5;
 	const cy = height*0.5;
-	renderBody(cx + b1.x*s, cy - b1.y*s, r1);
-	renderBody(cx + b2.x*s, cy - b2.y*s, r2);
+	renderBody(cx, cy, r2);
+	renderBody(cx + px*s, cy - py*s, r1);
+	updateInfo();
 };
 
-const checkRecord = () => {
-	
+const updateBodies = () => {
+	const dstSqr = px*px + py*py;
+	const a = G*mSum/dstSqr;
+	dst = sqrt(dstSqr);
+	minD = Math.min(minD, dst);
+	maxD = Math.max(maxD, dst);
+	const s = a/dst*dt;
+	vx -= px*s;
+	vy -= py*s;
+	px += vx*dt;
+	py += vy*dt;
+	const nx = px/dst;
+	angle = py >= 0 ? Math.acos(nx) : Math.PI*2 - Math.acos(nx);
+	++ itCount;
 };
 
 const iterate = () => {
+	if (itCount*dt >= maxT) return;
+	checkRecording();
 	for (let i=0; i<nIt; ++i) {
-
+		updateBodies();
+		checkRecording();
+		if (itCount*dt >= maxT) return;
 	}
 };
 
 const renderLoop = new FrameLoop(render);
+const execLoop = new ExecLoop(iterate);
 
 export const setCanvas = (dom) => {
 	canvas = dom;
 	ctx = canvas.getContext('2d');
 };
 
-export const reset = (data) => {
+export const reset = (data = {}) => {
 	recording.length = 0;
 	m1 = data.m1 ?? m1;
 	m2 = data.m2 ?? m2;
+	mSum = m1 + m2;
 	v0 = data.v0 ?? v0;
 	d0 = data.d0 ?? d0;
 	dt = data.dt ?? dt;
+	px = d0;
+	py = 0;
+	vx = 0;
+	vy = v0;
 	maxT = data.maxT ?? maxT;
 	itCount = 0;
 	nextRecT = 0;
-	const [ v1, v2 ] = calcInitialVelocities(m1, m2, v0);
-	b1.set(m1, d0, 0, 0, v1);
-	b2.set(m2, 0, 0, 0, v2);
+	minD = maxD = dst = d0;
+	strideRec = maxT/(nDataPoints - 1);
+	angle = 0;
 };
 
 export const start = () => {
 	renderLoop.start();
+	execLoop.start();
 };
+
+export const setInfo = (dom) => {
+	info = dom;
+};
+
+reset();

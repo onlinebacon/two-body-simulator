@@ -1,6 +1,6 @@
 import * as Simulation from './simulation.js';
 
-const canvasRatio = 4/3;
+const canvasRatio = 16/9;
 
 const resizeCanvas = (canvas) => {
 	let e = canvas;
@@ -15,10 +15,12 @@ const resizeCanvas = (canvas) => {
 
 window.addEventListener('load', () => {
 	const simCanvas = document.querySelector('#simulation');
+	const info = document.querySelector('#info');
 	resizeCanvas(simCanvas);
 	Simulation.setCanvas(simCanvas);
+	Simulation.setInfo(info);
 	Simulation.start();
 
-	const plotCanvas = document.querySelector('#plot');
-	resizeCanvas(plotCanvas);
+	// const plotCanvas = document.querySelector('#plot');
+	// resizeCanvas(plotCanvas);
 });
