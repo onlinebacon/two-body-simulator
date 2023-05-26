@@ -1,0 +1,8 @@
+body {
+	--color-bg: #1c1c1c;
+	--color-block: #2c2c2c;
+	--color-menu: #333;
+	--color-base-text: #ccc;
+	--color-field-value: rgb(255, 255, 190);
+	--color-text-field: #202020;
+}

@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<title>Two-Body Simulator</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/style.css">
+		<script type="module" src="js/main.js"></script>
+	</head>
+	<body>
+		<div class="main">
+			<div class="block">
+				<div class="block-item title1">System Setup</div>
+				<div class="block-item text-fields">
+					<div class="text-field">Big mass: <span class="val" name="m2" contenteditable="true">1e3</span> kg</div>
+					<div class="text-field">Small mass: <span class="val" name="m1" contenteditable="true">1</span> kg</div>
+					<div class="text-field">Initial distance: <span class="val" name="d0" contenteditable="true">1</span> m</div>
+					<div class="text-field">Initial velocity: <span class="val" name="v0" contenteditable="true">1</span> m/s</div>
+					<div class="text-field">Delta t: <span class="val" name="dt" contenteditable="true">1e-4</span> s</div>
+					<div class="text-field">Record for: <span class="val" name="tmax" contenteditable="true">15</span> s</div>
+				</div>
+			</div>
+			<div class="block half">
+				<div class="block-item title1">Simulation</div>
+				<div class="block-item"><canvas id="simulation"></canvas></div>
+			</div>
+			<div class="block half">
+				<div class="block-item title1">Plotting</div>
+				<div class="block-item"><canvas id="plot"></canvas></div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,14 @@
+body {
+	--block-spacing: 10px;
+	--block-padding-x: 18px;
+	--block-padding-y: 15px;
+	--title1-font: 20px;
+	--block-item-space: 10px;
+	--half-block-width: 512px;
+	--full-block-width: calc((var(--half-block-width) + var(--block-padding-x))*2 + var(--block-spacing));
+	--main-width: calc(var(--full-block-width) + var(--block-padding-x)*2 + var(--block-spacing)*2);
+	--text-field-font: 14px;
+	--text-field-padding-y: 5px;
+	--text-field-padding-x: 7px;
+	--text-field-spacing: 10px;
+}

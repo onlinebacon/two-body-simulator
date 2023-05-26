@@ -1,0 +1,55 @@
+@import url('./colors.css');
+@import url('./sizes.css');
+
+body {
+	font-size: 0px;
+	margin: 0px;
+	background-color: var(--color-bg);
+	color: var(--color-base-text);
+	font-family: Arial, Helvetica, sans-serif;
+}
+.block {
+	display: inline-block;
+	vertical-align: top;
+	background-color: var(--color-block);
+	margin-top: var(--block-spacing);
+	margin-left: var(--block-spacing);
+	border-radius: 4px;
+	box-shadow: 0px 0px 5px #111;
+	padding: var(--block-padding-y) var(--block-padding-x);
+	width: var(--full-block-width);
+}
+.block.half {
+	width: var(--half-block-width);
+}
+.main {
+	width: var(--main-width);
+	margin: 0px auto;
+}
+.title1 {
+	font-size: var(--title1-font);
+}
+.block-item {
+	margin-top: var(--block-item-space);
+}
+.block-item:nth-child(1) {
+	margin-top: 0px;
+}
+canvas {
+	background-color: #202020;
+}
+.text-field {
+	display: inline-block;
+	padding: var(--text-field-padding-y) var(--text-field-padding-x);
+	font-size: var(--text-field-font);
+	background-color: var(--color-text-field);
+	border-radius: var(--text-field-padding-y);
+	margin-left: var(--text-field-spacing);
+}
+.text-field:nth-child(1) {
+	margin-left: 0px;
+}
+.text-field .val {
+	font-weight: bold;
+	color: var(--color-field-value);
+}
