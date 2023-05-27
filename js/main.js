@@ -33,6 +33,7 @@ window.addEventListener('load', () => {
 	const plotCanvas = document.querySelector('#plot');
 	resizeCanvas(plotCanvas);
 	Plot.setCanvas(plotCanvas);
+	Plot.bindMouse();
 
 	resetSim();
 	Simulation.start();
