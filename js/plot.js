@@ -7,8 +7,6 @@ let recording = [];
 let mx = null;
 let my = null;
 
-const toDeg = (rad) => rad/Math.PI*180;
-
 const calcDist = (ax, ay, bx, by) => {
 	const dx = bx - ax;
 	const dy = by - ay;
@@ -53,7 +51,7 @@ const projectPoint = (point) => {
 	const t1 = recording.at(-1).t;
 	const dt = t1 - t0;
 	const x = t/dt*width;
-	const y = (1 - angle/TAU)*height;
+	const y = (1 - angle/360)*height;
 	return [ x, y ];
 };
 
@@ -84,7 +82,7 @@ const renderPoint = (point) => {
 	ctx.beginPath();
 	ctx.arc(x, y, 2, 0, TAU);
 	ctx.fill();
-	const text = '(' + [ t, toDeg(angle) ].map(val => val.toPrecision(6)*1).join(', ') + ')';
+	const text = '(' + [ t, angle ].map(val => val.toPrecision(6)*1).join(', ') + ')';
 	ctx.fillText(text, tx, ty);
 };
 

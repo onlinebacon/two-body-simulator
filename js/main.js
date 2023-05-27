@@ -1,5 +1,6 @@
 import * as Simulation from './simulation.js';
 import * as Plot from './plot.js';
+import * as Log from './log.js';
 
 const canvasRatio = 16/9;
 
@@ -26,6 +27,7 @@ const resetSim = () => {
 window.addEventListener('load', () => {
 	const simCanvas = document.querySelector('#simulation');
 	const info = document.querySelector('#info');
+	Log.setTextarea(document.querySelector('#log'));
 	resizeCanvas(simCanvas);
 	Simulation.setCanvas(simCanvas);
 	Simulation.setInfo(info);
